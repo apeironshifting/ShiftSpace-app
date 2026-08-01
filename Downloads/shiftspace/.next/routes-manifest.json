@@ -1,0 +1,231 @@
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "dynamicRoutes": [
+    {
+      "page": "/(app/places/[id]",
+      "regex": "^/\\(app/places/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/\\(app/places/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/(app/scripts/[id]",
+      "regex": "^/\\(app/scripts/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/\\(app/scripts/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/(app/scripts/[id]/empty",
+      "regex": "^/\\(app/scripts/([^/]+?)/empty(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/\\(app/scripts/(?<nxtPid>[^/]+?)/empty(?:/)?$"
+    },
+    {
+      "page": "/(app/scripts/[id]/places/[placeId]",
+      "regex": "^/\\(app/scripts/([^/]+?)/places/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid",
+        "nxtPplaceId": "nxtPplaceId"
+      },
+      "namedRegex": "^/\\(app/scripts/(?<nxtPid>[^/]+?)/places/(?<nxtPplaceId>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/discussions/[id]",
+      "regex": "^/discussions/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/discussions/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/journal/[id]",
+      "regex": "^/journal/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/journal/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/pages/[id]",
+      "regex": "^/pages/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/pages/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/places/[id]",
+      "regex": "^/places/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/places/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/posters/[id]",
+      "regex": "^/posters/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/posters/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/posters/[id]/people/[personId]",
+      "regex": "^/posters/([^/]+?)/people/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid",
+        "nxtPpersonId": "nxtPpersonId"
+      },
+      "namedRegex": "^/posters/(?<nxtPid>[^/]+?)/people/(?<nxtPpersonId>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/profile/[username]",
+      "regex": "^/profile/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPusername": "nxtPusername"
+      },
+      "namedRegex": "^/profile/(?<nxtPusername>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/scripts/[id]",
+      "regex": "^/scripts/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/scripts/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/scripts/[id]/empty",
+      "regex": "^/scripts/([^/]+?)/empty(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/scripts/(?<nxtPid>[^/]+?)/empty(?:/)?$"
+    },
+    {
+      "page": "/scripts/[id]/places/[placeId]",
+      "regex": "^/scripts/([^/]+?)/places/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid",
+        "nxtPplaceId": "nxtPplaceId"
+      },
+      "namedRegex": "^/scripts/(?<nxtPid>[^/]+?)/places/(?<nxtPplaceId>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/dashboard",
+      "regex": "^/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard(?:/)?$"
+    },
+    {
+      "page": "/discussions",
+      "regex": "^/discussions(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/discussions(?:/)?$"
+    },
+    {
+      "page": "/favicon.ico",
+      "regex": "^/favicon\\.ico(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favicon\\.ico(?:/)?$"
+    },
+    {
+      "page": "/info",
+      "regex": "^/info(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/info(?:/)?$"
+    },
+    {
+      "page": "/journal",
+      "regex": "^/journal(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/journal(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
+    },
+    {
+      "page": "/scripts",
+      "regex": "^/scripts(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/scripts(?:/)?$"
+    },
+    {
+      "page": "/settings",
+      "regex": "^/settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/settings(?:/)?$"
+    },
+    {
+      "page": "/settings/profile",
+      "regex": "^/settings/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/settings/profile(?:/)?$"
+    },
+    {
+      "page": "/signup",
+      "regex": "^/signup(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/signup(?:/)?$"
+    },
+    {
+      "page": "/waiting-room",
+      "regex": "^/waiting\\-room(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/waiting\\-room(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "RSC",
+    "varyHeader": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch",
+    "prefetchHeader": "Next-Router-Prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "Next-Router-Segment-Prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments"
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  },
+  "rewrites": []
+}
