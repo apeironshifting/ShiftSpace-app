@@ -29,7 +29,7 @@ export default function SignupPage() {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+    if (users?.some(u => u.username?.toLowerCase() === username.toLowerCase())) {
         setError('Username already taken.');
         setIsSubmitting(false);
         return;
