@@ -1,0 +1,5 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "cd Downloads/shiftspace && next build",
+  "installCommand": "cd Downloads/shiftspace && npm install"
+}
