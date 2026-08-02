@@ -34,10 +34,10 @@ export async function signUpWithEmail(
     return { user: null, error: 'Signup failed.' };
   }
 
-  await supabase
-    .from('profiles')
-    .update({ name, username })
-    .eq('id', data.user.id);
+//  await supabase
+//    .from('profiles')
+//    .update({ name, username })
+//    .eq('id', data.user.id);
 
   const { data: profile } = await supabase
     .from('profiles')
