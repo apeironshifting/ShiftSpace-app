@@ -7,6 +7,8 @@ import { cn } from '@/lib/utils';
 import { Providers } from './providers';
 import Script from 'next/script';
 
+export const dynamic = 'force-dynamic';
+
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
