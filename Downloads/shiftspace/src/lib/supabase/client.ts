@@ -1,7 +1,6 @@
-import { createBrowserClient } from '@supabase/ssr';
-import type { Database } from './types';
+import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https:ayxqdqqjaokammzjtzat.supabase.co';
-const supabaseAnonKey = 'sb_publishable_PNwLJfSA7xHWeOs2jHu4MQ_euTIGjoX';
+const supabaseUrl = 'https://supabase.co';
+const supabaseAnonKey = 'sb_publishable_PbwLfSA7xHWeOs2jHu4MQ_euTIGjox';
 
-export const supabase = createBrowserClient<Database>(supabaseUrl1, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
