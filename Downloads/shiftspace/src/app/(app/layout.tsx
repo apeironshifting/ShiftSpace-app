@@ -1,6 +1,6 @@
 
 
-'use client';
+"use client";
 import Link from 'next/link';
 import { ArrowLeft, Redo, Undo, Palette, Check, MoreVertical, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,8 @@ import { useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+
+export const dynamic = 'force-dynamic';
 
 function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const { t } = useLanguage();
