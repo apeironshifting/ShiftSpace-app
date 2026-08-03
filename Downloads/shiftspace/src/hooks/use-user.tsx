@@ -1,63 +1,130 @@
 "use client";
 
-import { createClient } from "@supabase/supabase-js";
+import React, { useState } from "react";
+import { signup } from "@/hooks/use-user";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+export default function SignupPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  const validate = () => {
+    if (!email.trim() || !password.trim() || !name.trim() || !username.trim()) {
+      setError("All fields are required.");
+      return false;
+    }
+    // basic email check
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setError("Please enter a valid email address.");
+      return false;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return false;
+    }
+    return true;
+  };
 
-export const signup = async (
-  email: string,
-  password: string,
-  name: string,
-  username: string
-) => {
-  if (!email || !password || !name || !username) {
-    throw new Error("All fields are required.");
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setMessage(null);
 
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        name,
-        username,
-      },
-    },
-  });
+    if (!validate()) return;
 
-  if (error) {
-    console.error("Signup error:", error);
-    throw error;
-  }
+    setLoading(true);
+    try {
+      const data = await signup(email.trim(), password, name.trim(), username.trim());
+      // Supabase returns data with user or confirmation info
+      setMessage("Signup successful. Check your email to confirm (if required).");
+      console.log("signup success:", data);
+      // optionally clear form
+      setEmail("");
+      setPassword("");
+      setName("");
+      setUsername("");
+    } catch (err: any) {
+      console.error("Signup failed:", err);
+      // Supabase error objects often have message or statusText
+      const msg = err?.message || err?.error_description || "Signup failed. Please try again.";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  return data;
-};
+  return (
+    <main style={{ maxWidth: 520, margin: "40px auto", padding: 20 }}>
+      <h1>Sign up</h1>
 
-export const login = async (email: string, password: string) => {
-  if (!email || !password) {
-    throw new Error("Email and password are required.");
-  }
+      <form onSubmit={handleSubmit} style={{ display: "grid", gap: 12 }}>
+        <label>
+          <div style={{ fontSize: 14, marginBottom: 6 }}>Name</div>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Full name"
+            required
+            style={{ width: "100%", padding: 8 }}
+          />
+        </label>
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+        <label>
+          <div style={{ fontSize: 14, marginBottom: 6 }}>Username</div>
+          <input
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="username"
+            required
+            style={{ width: "100%", padding: 8 }}
+          />
+        </label>
 
-  if (error) {
-    console.error("Login error:", error);
-    throw error;
-  }
+        <label>
+          <div style={{ fontSize: 14, marginBottom: 6 }}>Email</div>
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            type="email"
+            required
+            style={{ width: "100%", padding: 8 }}
+          />
+        </label>
 
-  return data;
-};
+        <label>
+          <div style={{ fontSize: 14, marginBottom: 6 }}>Password</div>
+          <input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            type="password"
+            required
+            style={{ width: "100%", padding: 8 }}
+          />
+        </label>
 
-export const logout = async () => {
-  const { error } = await supabase.auth.signOut();
-  if (error) {
-    console.error("Logout error:", error);
-    throw error;
-  }
-};
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            padding: "10px 14px",
+            background: "#0b5fff",
+            color: "white",
+            border: "none",
+            cursor: loading ? "not-allowed" : "pointer",
+          }}
+        >
+          {loading ? "Signing up…" : "Sign up"}
+        </button>
+
+        {message && <div style={{ color: "green", marginTop: 8 }}>{message}</div>}
+        {error && <div style={{ color: "crimson", marginTop: 8 }}>{error}</div>}
+      </form>
+    </main>
+  );
+}
