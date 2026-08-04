@@ -1,124 +1,132 @@
 "use client";
 
+/**
+ * Overwrite Downloads/shiftspace/src/hooks/use-user.tsx with this file.
+ * This version:
+ * - Validates inputs
+ * - Builds the exact payload Supabase expects
+ * - Sends the request with the anon key headers
+ * - Logs outgoing payload and full response for debugging
+ */
+
 console.log("use-user loaded from Downloads/shiftspace/src/hooks/use-user.tsx");
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error("Supabase env vars missing. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.");
-} else {
-  console.log("Supabase URL and anon key present (anon key hidden).");
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  console.error(
+    "Missing Supabase env vars. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY."
+  );
 }
 
-/**
- * Debugging signup that logs the outgoing payload and the full response
- * Paste this file exactly into Downloads/shiftspace/src/hooks/use-user.tsx
- */
+type SignupResult = any;
+
 export const signup = async (
   email: string,
   password: string,
   name: string,
   username: string
-) => {
-  // Basic validation to avoid sending malformed payloads
-  if (!email || !password || !name || !username) {
+): Promise<SignupResult> => {
+  // Defensive validation
+  const e = (email ?? "").toString().trim();
+  const p = (password ?? "").toString();
+  const n = (name ?? "").toString().trim();
+  const u = (username ?? "").toString().trim();
+
+  if (!e || !p || !n || !u) {
     const msg = "All fields are required.";
-    console.error(msg, { email, password, name, username });
+    console.error(msg, { email: e, password: p ? "•••" : "", name: n, username: u });
     throw new Error(msg);
   }
 
-  // Build the payload exactly as Supabase v2 expects
+  // Build payload exactly as Supabase v2 expects
   const payload = {
-    email: email.trim(),
-    password,
+    email: e,
+    password: p,
     options: {
       data: {
-        name: name.trim(),
-        username: username.trim(),
+        name: n,
+        username: u,
       },
     },
   };
 
-  // Log the payload so you can inspect it in DevTools Network/Console
-  console.log("Outgoing signup payload", payload);
+  console.log("Outgoing signup payload:", payload);
 
+  // Use fetch directly so we can see raw status/body
+  const url = `${SUPABASE_URL.replace(/\/$/, "")}/auth/v1/signup`;
   try {
-    // Use fetch directly so you can inspect the raw request/response
-    const res = await fetch(`${supabaseUrl}/auth/v1/signup`, {
+    const res = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        apikey: supabaseAnonKey,
-        Authorization: `Bearer ${supabaseAnonKey}`,
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
       },
       body: JSON.stringify(payload),
     });
 
     const text = await res.text();
-    let json: any = null;
+    let body: any = text;
     try {
-      json = JSON.parse(text);
-    } catch (e) {
-      // not JSON
+      body = JSON.parse(text);
+    } catch {
+      /* keep raw text if not JSON */
     }
 
-    // Log status and body for debugging
-    console.log("Supabase signup response status", res.status, "body:", json ?? text);
+    console.log("Supabase signup response status:", res.status, res.statusText, "body:", body);
 
     if (!res.ok) {
-      // Throw an error that includes the status and body so caller can show it
-      const err = new Error(`Signup failed: ${res.status} ${res.statusText}`);
-      // @ts-ignore attach debug info
-      err.debug = { status: res.status, body: json ?? text };
+      // Attach debug info to the thrown error
+      const err: any = new Error(`Signup failed: ${res.status} ${res.statusText}`);
+      err.status = res.status;
+      err.body = body;
       throw err;
     }
 
-    return json;
+    return body;
   } catch (err: any) {
-    console.error("signup caught error", err);
+    console.error("signup caught error:", err);
     throw err;
   }
 };
 
-/**
- * Optional helpers kept minimal
- */
+/* Minimal helpers kept for parity */
 export const login = async (email: string, password: string) => {
   if (!email || !password) throw new Error("Email and password are required.");
   const payload = { email: email.trim(), password };
-  console.log("Outgoing login payload", payload);
-
-  const res = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=password`, {
+  const url = `${SUPABASE_URL.replace(/\/$/, "")}/auth/v1/token?grant_type=password`;
+  const res = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      apikey: supabaseAnonKey,
-      Authorization: `Bearer ${supabaseAnonKey}`,
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
     },
     body: JSON.stringify(payload),
   });
-
   const json = await res.json();
   if (!res.ok) {
-    console.error("Login failed", res.status, json);
+    console.error("Login failed:", res.status, json);
     throw new Error(json?.error_description || json?.error || "Login failed");
   }
   return json;
 };
 
 export const logout = async () => {
-  const res = await fetch(`${supabaseUrl}/auth/v1/logout`, {
+  const url = `${SUPABASE_URL.replace(/\/$/, "")}/auth/v1/logout`;
+  const res = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      apikey: supabaseAnonKey,
-      Authorization: `Bearer ${supabaseAnonKey}`,
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
     },
   });
   if (!res.ok) {
     const body = await res.text();
-    console.error("Logout failed", res.status, body);
+    console.error("Logout failed:", res.status, body);
     throw new Error("Logout failed");
   }
   return true;
