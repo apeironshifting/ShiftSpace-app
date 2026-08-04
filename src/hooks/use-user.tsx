@@ -9,12 +9,14 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.error("Missing Supabase env vars. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.");
 }
 
+type AuthResponse = any;
+
 export const signup = async (
   email: string,
   password: string,
   name: string,
   username: string
-) => {
+): Promise<AuthResponse> => {
   const e = (email ?? "").toString().trim();
   const p = (password ?? "").toString();
   const n = (name ?? "").toString().trim();
@@ -40,33 +42,40 @@ export const signup = async (
   console.log("Outgoing signup payload:", payload);
 
   const url = `${SUPABASE_URL}/auth/v1/signup`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`
-    },
-    body: JSON.stringify(payload)
-  });
 
-  const text = await res.text();
-  let body: any = text;
-  try { body = JSON.parse(text); } catch {}
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+      },
+      body: JSON.stringify(payload)
+    });
 
-  console.log("Supabase signup response status:", res.status, res.statusText, "body:", body);
+    const text = await res.text();
+    let body: any = text;
+    try { body = JSON.parse(text); } catch { /* keep raw text */ }
 
-  if (!res.ok) {
-    const err: any = new Error(`Signup failed: ${res.status} ${res.statusText}`);
-    err.status = res.status;
-    err.body = body;
+    console.log("Supabase signup response status:", res.status, res.statusText, "body:", body);
+
+    if (!res.ok) {
+      const err: any = new Error(`Signup failed: ${res.status} ${res.statusText}`);
+      err.status = res.status;
+      err.body = body;
+      throw err;
+    }
+
+    return body;
+  } catch (err: any) {
+    // Re-throw with some context
+    console.error("signup error:", err);
     throw err;
   }
-
-  return body;
 };
 
-export const login = async (email: string, password: string) => {
+export const login = async (email: string, password: string): Promise<AuthResponse> => {
   const e = (email ?? "").toString().trim();
   const p = (password ?? "").toString();
 
@@ -76,26 +85,35 @@ export const login = async (email: string, password: string) => {
 
   const payload = { email: e, password: p };
   const url = `${SUPABASE_URL}/auth/v1/token?grant_type=password`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`
-    },
-    body: JSON.stringify(payload)
-  });
 
-  const json = await res.json();
-  if (!res.ok) {
-    console.error("Login failed:", res.status, json);
-    throw new Error(json?.error_description || json?.error || "Login failed");
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const text = await res.text();
+    let body: any = text;
+    try { body = JSON.parse(text); } catch { /* keep raw text */ }
+
+    if (!res.ok) {
+      console.error("Login failed:", res.status, body);
+      throw new Error(body?.error_description || body?.error || "Login failed");
+    }
+
+    return body;
+  } catch (err: any) {
+    console.error("login error:", err);
+    throw err;
   }
-
-  return json;
 };
 
-export const logout = async (accessToken?: string) => {
+export const logout = async (accessToken?: string): Promise<boolean> => {
   const url = `${SUPABASE_URL}/auth/v1/logout`;
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -105,16 +123,21 @@ export const logout = async (accessToken?: string) => {
   // If caller provides an access token, use it; otherwise fall back to anon key.
   headers.Authorization = accessToken ? `Bearer ${accessToken}` : `Bearer ${SUPABASE_ANON_KEY}`;
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers
-  });
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers
+    });
 
-  if (!res.ok) {
-    const body = await res.text();
-    console.error("Logout failed:", res.status, body);
-    throw new Error("Logout failed");
+    if (!res.ok) {
+      const body = await res.text();
+      console.error("Logout failed:", res.status, body);
+      throw new Error("Logout failed");
+    }
+
+    return true;
+  } catch (err: any) {
+    console.error("logout error:", err);
+    throw err;
   }
-
-  return true;
 };
