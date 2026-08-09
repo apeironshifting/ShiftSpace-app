@@ -201,7 +201,7 @@ email,
 password,
 options: {
 data: {
-display\_name: name,
+display_name: name,
 username: username
 }
 }
