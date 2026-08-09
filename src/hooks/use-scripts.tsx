@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { initialScriptsForHydration, defaultScriptTemplate, defaultPerson, defaultPossession, defaultOptionalSection, defaultSODetails, defaultPet, emptyScriptTemplate, wrScriptTemplate, defaultPlace, defaultPage } from '@/lib/data';
-import { isTranslationKey } from '@/lib/utils';
 import { useLanguage } from './use-language';
 import { useDebouncedCallback } from './use-debounced-callback';
 import { CheckSquare, ChevronRight, Heading1, Heading2, Heading3, ImageIcon, Info, List, ListOrdered, Minus, Music, Package, PlusCircle, Quote, Type, File, Users, Link as LinkIcon, RectangleHorizontal } from 'lucide-react';
