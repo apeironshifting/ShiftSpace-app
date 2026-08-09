@@ -5,6 +5,7 @@ import React, { createContext, useContext, useEffect, useState, useMemo, useCall
 import { type Block } from './use-scripts';
 import { saveToStorage, getFromStorage } from '@/lib/storage';
 import { ThemeId } from './use-theme';
+import { supabase } from '@/lib/supabase';
 
 export type ShiftingStatus = 'shifted' | 'not-shifted' | null;
 
@@ -192,22 +193,34 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     return false;
   };
 
-  const signup = (name: string, username: string) => {
-    const newUser: User = {
-      ...defaultUser,
-      id: `user-${Date.now()}`,
-      name,
-      username,
-    };
-    const newRegistry = [...registry, newUser];
-    saveRegistry(newRegistry);
-    
-    setCurrentUserId(newUser.id);
-    localStorage.setItem('currentUserId', newUser.id);
-    setUndoableState({ history: [newUser], currentIndex: 0 });
-    saveToStorage(`userProfile_${newUser.id}`, newUser);
-    return newUser;
-  };
+ const signup = async (name: string, username: string) => {
+const newUser: User = {
+...defaultUser,
+id: `user-${Date.now()}`,
+name,
+username,
+};
+
+```
+const { error } = await supabase
+  .from('profiles')
+  .insert([{ id: newUser.id, name, username }]);
+
+if (error) {
+  console.error("Error connecting to Supabase database table:", error.message);
+}
+
+const newRegistry = [...registry, newUser];
+saveRegistry(newRegistry);
+
+setCurrentUserId(newUser.id);
+localStorage.setItem('currentUserId', newUser.id);
+setUndoableState({ history: [newRegistry], currentIndex: 0 });
+saveToStorage(`userProfile_${newUser.id}`, newUser);
+return newUser;
+```
+
+};
 
   const logout = () => {
     setCurrentUserId(null);
