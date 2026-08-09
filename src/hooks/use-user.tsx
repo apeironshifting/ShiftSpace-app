@@ -193,20 +193,40 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     return false;
   };
 
-const signup = async (name: string, username: string) => {
+const signup = async (name: string, username: string, email?: string, password?: string) => {
+// 1. Register the user in Supabase Authentication securely
+if (email && password) {
+const { data: authData, error: authError } = await supabase.auth.signUp({
+email,
+password,
+options: {
+data: {
+display\_name: name,
+username: username
+}
+}
+});
+
+  if (authError) {
+    console.error("Supabase Auth Error:", authError.message);
+    throw authError;
+  }
+}
+
+// 2. Keep the local state sync happy so the template layout functions
 const newUser: User = {
-...defaultUser,
-id: `user-${Date.now()}`,
-name,
-username
+  ...defaultUser,
+  id: `user-${Date.now()}`,
+  name,
+  username,
 };
 
-const { error } = await supabase
+const { error: tableError } = await supabase
   .from('profiles')
   .insert([{ id: newUser.id, name, username }]);
 
-if (error) {
-  console.error(error.message);
+if (tableError) {
+  console.error("Profiles Table Error:", tableError.message);
 }
 
 const newRegistry = [...registry, newUser];
